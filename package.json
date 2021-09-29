@@ -6,8 +6,8 @@
   "license": "GPL-3.0-only",
   "main": "src/app.js",
   "scripts": {
-    "dev": "nodemon ./src/app/index.js",
-    "start": "node ./src/app/index.js",
+    "dev": "nodemon ./src/app.js",
+    "start": "node ./src/app.js",
     "lint": "eslint ./src/**/*.js --max-warnings 0",
     "lint-fix": "eslint ./src/**/*.js --fix",
     "prettier:ci": "prettier .",
