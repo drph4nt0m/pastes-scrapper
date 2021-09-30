@@ -9,7 +9,7 @@ const sendReport = require('./utils/sendReport');
 
 const agenda = new Agenda({ name: 'pastes', db: { address: config.agenda.db } });
 
-agenda.define('pastebin_com', { priority: 'high' }, async (job, done) => {
+agenda.define('pastebin_com', async (job, done) => {
   try {
     const count = await pastebin();
     logger.info(`${count} pastes found on pastebin_com`);
@@ -21,7 +21,7 @@ agenda.define('pastebin_com', { priority: 'high' }, async (job, done) => {
   }
 });
 
-agenda.define('stronghold_onion', { priority: 'low' }, async (job, done) => {
+agenda.define('stronghold_onion', async (job, done) => {
   try {
     const count = await stronghold();
     logger.info(`${count} pastes found on stronghold_onion`);

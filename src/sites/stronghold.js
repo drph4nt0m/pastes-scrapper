@@ -54,7 +54,8 @@ const getPaste = async (page, id) => {
   const pUrl = `http://strongerw2ise74v3duebgsvug4mehyhlpa7f6kfwnas7zofs3kov7yd.onion/${pId}`;
 
   await page.goto(pUrl, {
-    waitUntil: 'networkidle0'
+    waitUntil: 'networkidle0',
+    timeout: 300000
   });
 
   const pTitle = await getXpathValue(page, 'title');
@@ -112,7 +113,8 @@ const getPastes = async () => {
     logger.info(`Getting page ${i}...`, { type: 'web' });
 
     await page.goto(`http://strongerw2ise74v3duebgsvug4mehyhlpa7f6kfwnas7zofs3kov7yd.onion/all?page=${i}`, {
-      waitUntil: 'networkidle0'
+      waitUntil: 'networkidle0',
+      timeout: 300000
     });
 
     const pastes = await page.evaluate(() =>
