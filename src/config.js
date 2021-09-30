@@ -5,7 +5,8 @@ module.exports = {
     password: process.env.REDIS_PASSWORD
   },
   mongodb: {
-    uri: process.env.MONGODB_URI
+    uri: process.env.MONGODB_URI,
+    dashboard_uri: process.env.MONGODB_DASHBOARD_URI
   },
   agenda: {
     db: process.env.AGENDA_DB

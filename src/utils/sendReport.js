@@ -10,6 +10,7 @@ const sendReport = async (pasteSite, count, errorMsg = null) => {
       embeds: [
         {
           title: pasteSite,
+          url: config.mongodb.dashboard_uri,
           description: errorMsg ? `Error: ${errorMsg}` : `${count} new pastes scraped!`,
           fields: [
             {
