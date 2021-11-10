@@ -2,8 +2,9 @@ require('dotenv').config();
 const Agenda = require('agenda');
 
 const config = require('./config');
-const stronghold = require('./sites/stronghold');
 const pastebin = require('./sites/pastebin');
+const stronghold = require('./sites/stronghold');
+const deeppaste = require('./sites/deeppaste');
 const logger = require('./utils/logger');
 const sendReport = require('./utils/sendReport');
 
@@ -33,6 +34,18 @@ agenda.define('stronghold_onion', async (job, done) => {
   }
 });
 
+agenda.define('deeppaste_onion', async (job, done) => {
+  try {
+    const count = await deeppaste();
+    logger.info(`${count} pastes found on deeppaste_onion`);
+    await sendReport('deeppaste_onion', count);
+    done();
+  } catch (error) {
+    await sendReport('deeppaste_onion', -1, error);
+    done(error);
+  }
+});
+
 agenda.on('start', (job) => {
   logger.info(`Job ${job.attrs.name} starting`, { type: 'general' });
 });
@@ -48,5 +61,6 @@ agenda.on('fail', (error, job) => {
 agenda.on('ready', () => {
   agenda.start();
   agenda.every('0 */1 * * *', 'pastebin_com');
-  agenda.every('30 */1 * * *', 'stronghold_onion');
+  agenda.every('15 */1 * * *', 'stronghold_onion');
+  agenda.every('45 */1 * * *', 'deeppaste_onion');
 });

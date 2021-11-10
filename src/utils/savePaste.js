@@ -48,6 +48,7 @@ try {
 }
 
 module.exports = async (paste) => {
+  // return;
   try {
     await pasteModel.updateOne({ id: paste.id }, paste, { upsert: true });
     logger.info(`${paste.id} Paste saved in database`, { type: 'database' });

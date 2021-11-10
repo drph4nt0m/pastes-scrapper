@@ -24,6 +24,11 @@ const sendReport = async (pasteSite, count, errorMsg = null) => {
               inline: true
             },
             {
+              name: 'deeppaste_onion',
+              value: await countPastes('deeppaste_onion:*'),
+              inline: true
+            },
+            {
               name: 'total',
               value: await countPastes('*'),
               inline: true

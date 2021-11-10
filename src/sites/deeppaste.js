@@ -8,23 +8,23 @@ const savePaste = require('../utils/savePaste');
 
 const features = {
   title: {
-    xpath: `//section[@id='show']/div[@class='row']/div/div[contains(@class,'pre-header')]/div/div/h4`,
+    xpath: `/html/body/h3[2]`,
     attribute: 'innerText',
     parse: (value) => value.trim()
   },
   author: {
-    xpath: `//section[@id='show']/div[@class='row']/div/div[contains(@class,'pre-footer')]/div/div[1]`,
+    xpath: `/html/body/p[1]`,
     attribute: 'innerText',
-    parse: (value) => value.trim().split(' at ')[0].split(' by ')[1].trim()
+    parse: (value) => value.trim().split(', ')[0].trim()
   },
   createdOn: {
-    xpath: `//section[@id='show']/div[@class='row']/div/div[contains(@class,'pre-footer')]/div/div[1]`,
+    xpath: `/html/body/p[1]`,
     attribute: 'innerText',
-    parse: (value) => chrono.parseDate(value.trim().split(' at ')[1].trim())
+    parse: (value) => chrono.parseDate(value.trim().split(', ')[1].trim())
   },
   body: {
-    xpath: `//div[contains(@class,'well')]`,
-    attribute: 'innerText',
+    xpath: `/html/body/textarea[@class='boxes'][1]`,
+    attribute: 'value',
     parse: (value) => value.trim()
   }
 };
@@ -51,7 +51,7 @@ const getXpathValue = async (page, feature) => {
 
 const getPaste = async (page, id) => {
   const pId = id;
-  const pUrl = `http://strongerw2ise74v3duebgsvug4mehyhlpa7f6kfwnas7zofs3kov7yd.onion/${pId}`;
+  const pUrl = `http://depasteon6cqgrykzrgya52xglohg5ovyuyhte3ll7hzix7h5ldfqsyd.onion/show.php?md5=${pId}`;
 
   await page.goto(pUrl, {
     waitUntil: 'networkidle0',
@@ -65,8 +65,8 @@ const getPaste = async (page, id) => {
   const pMD5 = md5(pBody);
 
   const paste = {
-    id: `stronghold_onion:${pId}`,
-    site_id: 'stronghold_onion',
+    id: `deeppaste_onion:${pId}`,
+    site_id: 'deeppaste_onion',
     paste: {
       id: pId,
       url: pUrl,
@@ -77,8 +77,6 @@ const getPaste = async (page, id) => {
       md5: pMD5
     }
   };
-
-  // logger.info(`paste: ${JSON.stringify(paste)}`, { type: 'web' });
 
   await savePaste(paste);
 
@@ -110,29 +108,36 @@ const getPastes = async () => {
 
     let count = 0;
 
-    for (let i = 1; i <= 5; i += 1) {
+    for (let i = 0; i <= 100; i += 1) {
       logger.info(`Getting page ${i}...`, { type: 'web' });
 
-      await page.goto(`http://strongerw2ise74v3duebgsvug4mehyhlpa7f6kfwnas7zofs3kov7yd.onion/all?page=${i}`, {
+      await page.goto(`http://depasteon6cqgrykzrgya52xglohg5ovyuyhte3ll7hzix7h5ldfqsyd.onion/last.php?page=${i}`, {
         waitUntil: 'networkidle0',
-        timeout: 300000
+        timeout: 600000
       });
 
-      const pastes = await page.evaluate(() =>
-        Array.from(document.querySelectorAll('section#list div.row a.btn[href]'), (a) => a.getAttribute('href').split('/').slice(-1)[0].trim())
-      );
+      const elHandles = await page.$x(`/html/body/a[contains(@href,'show.php?md5=')]`);
+
+      const pastes = [];
+
+      for (let j = 0; j < elHandles.length; j += 1) {
+        const el = await elHandles[j].getProperty('href');
+        const value = await el.jsonValue();
+        const paste = value.split('=')[1];
+        pastes.push(paste);
+      }
 
       // eslint-disable-next-line no-restricted-syntax
       for (const paste of pastes) {
-        if (await checkCache(`stronghold_onion:${paste}`)) {
-          logger.info(`stronghold_onion:${paste} found in cache`, { type: 'database' });
+        if (await checkCache(`deeppaste_onion:${paste}`)) {
+          logger.info(`deeppaste_onion:${paste} found in cache`, { type: 'database' });
         } else {
           await getPaste(page, paste);
           count += 1;
         }
       }
     }
-    
+
     await browser.close();
     return count;
   } catch (error) {
