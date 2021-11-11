@@ -19,6 +19,11 @@ const sendReport = async (pasteSite, count, errorMsg = null) => {
               inline: true
             },
             {
+              name: 'pastelink_net',
+              value: await countPastes('pastelink_net:*'),
+              inline: true
+            },
+            {
               name: 'stronghold_onion',
               value: await countPastes('stronghold_onion:*'),
               inline: true
@@ -31,7 +36,7 @@ const sendReport = async (pasteSite, count, errorMsg = null) => {
             {
               name: 'total',
               value: await countPastes('*'),
-              inline: true
+              inline: false
             }
           ],
           color: errorMsg ? 13123149 : 16764033,

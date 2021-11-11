@@ -3,6 +3,7 @@ const Agenda = require('agenda');
 
 const config = require('./config');
 const pastebin = require('./sites/pastebin');
+const pastelink = require('./sites/pastelink');
 const stronghold = require('./sites/stronghold');
 const deeppaste = require('./sites/deeppaste');
 const logger = require('./utils/logger');
@@ -18,6 +19,18 @@ agenda.define('pastebin_com', async (job, done) => {
     done();
   } catch (error) {
     await sendReport('pastebin_com', -1, error);
+    done(error);
+  }
+});
+
+agenda.define('pastelink_net', async (job, done) => {
+  try {
+    const count = await pastelink();
+    logger.info(`${count} pastes found on pastebin_com`);
+    await sendReport('pastelink_net', count);
+    done();
+  } catch (error) {
+    await sendReport('pastelink_net', -1, error);
     done(error);
   }
 });
@@ -62,5 +75,6 @@ agenda.on('ready', () => {
   agenda.start();
   agenda.every('0 */1 * * *', 'pastebin_com');
   agenda.every('15 */1 * * *', 'stronghold_onion');
+  agenda.every('30 */1 * * *', 'pastelink_net');
   agenda.every('45 */1 * * *', 'deeppaste_onion');
 });

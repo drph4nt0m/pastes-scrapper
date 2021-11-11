@@ -108,7 +108,7 @@ const getPastes = async () => {
 
     let count = 0;
 
-    for (let i = 0; i <= 100; i += 1) {
+    for (let i = 0; i <= 10; i += 1) {
       logger.info(`Getting page ${i}...`, { type: 'web' });
 
       await page.goto(`http://depasteon6cqgrykzrgya52xglohg5ovyuyhte3ll7hzix7h5ldfqsyd.onion/last.php?page=${i}`, {
