@@ -26,7 +26,7 @@ const getPaste = async (id) => {
 
   const pTitle = $('#title-display').text().trim();
   const pAuthor = $('#info > span#author-reference > a').text().trim();
-  const pCreatedOn = chrono.parseDate($('#info > p:not([id=\'viewcount\'])').attr('title').trim());
+  const pCreatedOn = chrono.parseDate($('#info > p:nth-last-of-type(2)').attr('title').trim());
   const pBody = $('#body-display').text().trim();
   const pMD5 = md5(pBody);
 
@@ -43,6 +43,8 @@ const getPaste = async (id) => {
       md5: pMD5
     }
   };
+
+  // logger.info(`paste: ${JSON.stringify(paste)}`, { type: 'web' });
 
   await savePaste(paste);
 };
